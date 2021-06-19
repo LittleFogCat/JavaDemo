@@ -75,7 +75,7 @@ public class LineCounter {
         this.granularity = builder.granularity;
         this.strict = builder.strict;
         this.customFilter = builder.filter;
-        this.counterName = builder.counterName;
+        this.counterName = builder.counterName == null ? paths.toString() : builder.counterName;
         this.printDetail = builder.printDetail;
         this.printAfterCount = builder.printAfterCount;
         this.countUseTime = builder.countUseTime;
@@ -224,7 +224,7 @@ public class LineCounter {
         private Set<String> excludes = null;
         private Granularity granularity = Granularity.TYPE;
         private boolean strict = false;
-        private String counterName = "Unnamed";
+        private String counterName = null;
         private Predicate<String> filter = null;
         private boolean printDetail = false;
         private boolean printAfterCount = true;

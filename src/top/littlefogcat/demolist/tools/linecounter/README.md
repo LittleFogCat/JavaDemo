@@ -10,7 +10,7 @@ LineCounter.CountResult result = new LineCounter.Builder("C:\\Repositories") // 
         .granularity(LineCounter.Granularity.TYPE) // 统计的粒度，统计结果以文件/类型/总计为单位，默认TYPE
         .strict(true) // 是否过滤无效行，默认否
         .filter(null) // 过滤无效行规则，留空则使用默认规则
-        .name("default name") // 当前统计器名称，在打印时使用
+        .name("default name") // 当前统计器名称，在打印时使用，留空则为统计的文件夹路径
         .printDetail(false) // 打印时是否打印具体统计结果HashMap，默认否
         .printAfterCount(true) // 是否在统计之后打印，默认是
         .countUseTime(true) // 是否打印统计用时，默认否

@@ -6,6 +6,6 @@ import top.littlefogcat.demolist.learn.annotation.annotations.Bean;
 public class Panda implements Animal {
     @Override
     public void say() {
-        System.out.println("I am a panda");
+        System.out.println("I am panda@"+hashCode());
     }
 }

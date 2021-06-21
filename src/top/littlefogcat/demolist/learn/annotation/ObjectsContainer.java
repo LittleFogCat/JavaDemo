@@ -14,7 +14,7 @@ import java.util.*;
 public class ObjectsContainer {
     private static final Map<String, ObjectsContainer> containerMap = new HashMap<>();
 
-    public String packageName;
+    private final String packageName;
     private final Map<String, Object> beans = new HashMap<>(); // 保存实例对象
     private final Map<Class<?>, Object> components = new HashMap<>(); // 组件类，组件中可实现自动注入
 
@@ -31,7 +31,7 @@ public class ObjectsContainer {
     }
 
     // 扫描包下所有标注了@Bean和@Component的类
-    public void scanAnnotations() {
+    private void scanAnnotations() {
         List<String> classList = ClassUtil.scanClasses(getClass(), packageName);
         Set<Class<?>> componentClasses = new HashSet<>();
         if (classList != null) {
@@ -46,9 +46,12 @@ public class ObjectsContainer {
                     if (beanAnno != null) {
                         // 注册bean
                         String beanName = beanAnno.name();
+                        if (beans.containsKey(beanName)) {
+                            throw new DuplicateBeanNameException(beanName, clazz, beans.get(beanName).getClass());
+                        }
                         beans.put(beanName, clazz.newInstance());
                     }
-                } catch (Exception e) {
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
@@ -73,12 +76,13 @@ public class ObjectsContainer {
                 }
                 components.put(clazz, component);
             } catch (Exception e) {
-                Exception exception = new RuntimeException("Component `" + clazz + "` create failed.");
+                Exception exception = new RuntimeException("Component `" + clazz + "` create failed.", e);
                 exception.printStackTrace();
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getComponent(String clazzName) {
         Class<?> clazz;
         try {
@@ -87,11 +91,11 @@ public class ObjectsContainer {
             throw new NoSuchElementException("Component named `" + clazzName + "` has not been registered. " +
                     "Use @Component annotation to register a component.");
         }
-        return getComponent(clazz);
+        return (T) getComponent(clazz);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getComponent(Class<?> clazz) {
+    public <T> T getComponent(Class<T> clazz) {
         if (!components.containsKey(clazz)) {
             throw new NoSuchElementException("Component class `" + clazz + "` has not been registered. " +
                     "Use @Component annotation to register a component.");
@@ -111,4 +115,14 @@ public class ObjectsContainer {
         return (T) beans.get(name);
     }
 
+    public static class DuplicateBeanNameException extends RuntimeException {
+        public DuplicateBeanNameException(String name, Class<?> c1, Class<?> c2) {
+            this("Duplicated @Bean class named `" + name + "`. " +
+                    "Duplicated classes = [" + c1.getName() + ", " + c2.getName() + "]");
+        }
+
+        public DuplicateBeanNameException(String msg) {
+            super(msg);
+        }
+    }
 }

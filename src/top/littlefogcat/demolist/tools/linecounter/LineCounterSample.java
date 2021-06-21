@@ -1,6 +1,9 @@
 package top.littlefogcat.demolist.tools.linecounter;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,13 +22,13 @@ public class LineCounterSample {
     public static final Set<String> defaultExclude = new HashSet<>(Arrays.asList(
             ".idea",
             "build",
+            "generated",
             "compose-sample",
             "Cranesample",
             "FileExplorer",
             "FileExplorer1",
             "FileExplorerY",
             "flutter_app",
-            "generated",
             "ic_launcher_background.xml",
             "ic_launcher_foreground.xml",
             "ic_launcher_round.xml",
@@ -40,10 +43,11 @@ public class LineCounterSample {
     ));
 
     public static void main(String[] args) throws IOException {
-        countDemoList();
-        countTotal();
-        countTotalStrict();
-        countTotalSample();
+//        countDemoList();
+//        countTotal();
+//        countTotalStrict();
+//        countTotalSample();
+        countCurrentPackage();
     }
 
     static void countDemoList() {
@@ -84,5 +88,10 @@ public class LineCounterSample {
                 .printAfterCount(true) // 是否在统计之后打印，默认是
                 .countUseTime(true) // 是否打印统计用时，默认否
                 .count(); // 进行统计
+    }
+
+    static void countCurrentPackage() {
+        String path = "C:/Users/littlefogcat/IdeaProjects/DemoList/src/top/littlefogcat/demolist/tools/linecounter/LineCounter.java";
+        new LineCounter.Builder(path).strict(true).count();
     }
 }
